@@ -40,6 +40,62 @@ create_kudu_table <- function(sc,table_name,schema,keys,options){
     
 }
 
+#' create_kudu_impala_table
+#'
+#' @param sc - spark connection
+#' @param database - name of the impala/hive database where table will be created
+#' @param table_name - table name
+#' @param schema - table colum definitions
+#' @param keys - list of key colums
+#' @param options - kudu table options
+#'
+#' @return 
+#' @export
+#'
+#' @examples
+#' 
+create_kudu_impala_table <- function(sc, database, table_name, schema, keys, options){
+  # create table in impala
+  paste0("CREATE EXTERNAL TABLE `", database, ".", table_name, "` (
+    `uwi` STRING,
+    `uwi_nexen` STRING,
+    `well_name` STRING,
+    `license_num` STRING,
+    `drain_area` STRING,
+    `project` STRING,
+    `lease` STRING,
+    `surface_pad` STRING,
+    `well_pair_id` STRING,
+    `well_type` STRING,
+    `well_subtype` STRING,
+    `proj_phase` STRING,
+    `lease_operator` STRING,
+    `latitude` FLOAT,
+    `longitude` FLOAT,
+    `bottom_hole_latitude` FLOAT,
+    `bottom_hole_longitude` FLOAT,
+    `kb_elev` FLOAT,
+    `max_tvd` FLOAT,
+    `drill_td` FLOAT,
+    `abandonment_date` STRING,
+    `completion_date` STRING,
+    `confidential_date` STRING,
+    `effective_date` STRING,
+    `expiry_date` STRING,
+    `final_drill_date` STRING,
+    `rig_on_site_date` STRING,
+    `rig_release_date` STRING,
+    `spud_date` STRING
+  )
+  TBLPROPERTIES(
+    'storage_handler' = 'com.cloudera.kudu.hive.KuduStorageHandler',
+    'kudu.table_name' = ' kudu_test_1 ',
+    'kudu.master_addresses' = 'calxhad1wrk1p.global.ad:7051,calxhad1wrk3p.global.ad:7051,calxhad1wrk5p.global.ad:7051,calxhad1wrk7p.global.ad:7051',
+    'kudu.key_columns' = 'uwi'
+  );")
+}
+
+
 #' @export
 delete_kudu_table <- function(sc,kudu_table){
   resp <- sc$kudu_context %>% invoke("deleteTable",kudu_table)
